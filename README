@@ -1,0 +1,13 @@
+Glasbt:
+* Is a servlet 3.0 web container for JSF 2.0 development with Scala and SBT
+  based on GlashFish 3.1, similar to maven-embedded-glassfish-plugin for Java and Maven
+* May also be used as a lightweight standalone web server
+
+== Install and use with SBT projects
+
+Download glasbt.zip and extract to a directory and add this directory to system
+path, so that the command "glasbt" can be run easily.
+
+From an SBT web project directory, package and start Glasbt:
+$ sbt package         <-- create WAR file
+$ glasbt              <-- start GlashFish and deploy the WAR file

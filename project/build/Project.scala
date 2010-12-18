@@ -19,5 +19,16 @@ class Project(info: ProjectInfo) extends DefaultProject(info) {
     "org.glassfish.extras" % "glassfish-embedded-web" % "3.1-SNAPSHOT"  //3.0.1"
   ) ++ super.libraryDependencies
 
-  override def mainClass = Some("glasbt.Boot")
+  // Publish -------------------------------------------------------------------
+
+  override def managedStyle = ManagedStyle.Maven
+
+  val publishTo = "Sonatype Snapshot" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+  // ~/.ivy2/.credentials should be:
+  //   realm=Sonatype Nexus Repository Manager
+  //   host=oss.sonatype.org
+  //   user=xxx
+  //   password=xxx
+  Credentials(Path.userHome / ".ivy2" / ".credentials", log)
 }
