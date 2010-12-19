@@ -1,12 +1,15 @@
 package glasbt
 
-import java.io.File
-import java.util.Scanner
+import java.io.{File, FileInputStream}
+import java.util.{Properties, Scanner}
 import org.glassfish.embeddable.{CommandRunner, Deployer, GlassFish, GlassFishRuntime}
 
 /** http://embedded-glassfish.java.net/nonav/apidocs/org/glassfish/embeddable/GlassFish.html */
 object Boot {
   def main(args: Array[String]) {
+    val (short, long) = findWar
+    println("\n-------- WAR file: " + short + " --------\n")
+
     val glassFish = GlassFishRuntime.bootstrap.newGlassFish
     start(glassFish)
     println("\n-------- GlashFish started, now deploy your WAR file --------\n")
@@ -16,7 +19,7 @@ object Boot {
     val scanner = new Scanner(System.in)
     var stopped = false
     while (!stopped) {
-      val deployedApp = deploy(deployer)
+      val deployedApp = deploy(long, deployer)
       println("\n------- Deployed, [R] to redeploy, [X] to exit --------\n")
 
       var commandValid = false
@@ -66,14 +69,27 @@ object Boot {
   }
 
   /** Deploy to / and return a String representing the deployed app. */
-  private def deploy(deployer: Deployer): String = {
-    val currentDir = System.getProperty("user.dir")
-    val war = currentDir + "/target/scala_2.8.1/comy_2.8.1-1.2.war"  // TODO: find the first .war
-
-    val deployedApp = deployer.deploy(
+  private def deploy(war: String, deployer: Deployer): String = {
+    deployer.deploy(
       new File(war).toURI,
       "--contextroot=", "--force=true")
+  }
 
-    deployedApp
+  //                    short   long
+  private def findWar: (String, String) = {
+    val currentDir = System.getProperty("user.dir")
+
+    // See project information in build.properties
+    val props = new Properties
+    val fis   = new FileInputStream(currentDir + "/project/build.properties")
+    props.load(fis)
+    fis.close
+    val scalaVersion   = props.getProperty("build.scala.versions").split(" ").last
+    val projectName    = props.getProperty("project.name")
+    val projectVersion = props.getProperty("project.version")
+
+    val short = projectName + "_" + scalaVersion + "-" + projectVersion + ".war"
+    val long  = currentDir + "/target/scala_" + scalaVersion + "/" + short
+    (short, long)
   }
 }
