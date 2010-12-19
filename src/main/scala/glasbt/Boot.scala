@@ -7,11 +7,18 @@ import org.glassfish.embeddable.{CommandRunner, Deployer, GlassFish, GlassFishRu
 /** http://embedded-glassfish.java.net/nonav/apidocs/org/glassfish/embeddable/GlassFish.html */
 object Boot {
   def main(args: Array[String]) {
-    val (short, long) = findWar
-    println("\n-------- WAR file: " + short + " --------\n")
+    val argv = args.size
+    if (argv > 1) {
+      println("Usage: glasbt [port]\n  port: default is 8080\n")
+      System.exit(-1)
+    }
+    val port = if (argv == 0) 8080 else args(0).toInt
+
+    val (fileName, fullFileName) = findWar
+    println("\n-------- WAR file: " + fileName + " --------\n")
 
     val glassFish = GlassFishRuntime.bootstrap.newGlassFish
-    start(glassFish)
+    start(port, glassFish)
     println("\n-------- GlashFish started, now deploy your WAR file --------\n")
 
     val deployer  = glassFish.getService(classOf[Deployer])
@@ -19,7 +26,7 @@ object Boot {
     val scanner = new Scanner(System.in)
     var stopped = false
     while (!stopped) {
-      val deployedApp = deploy(long, deployer)
+      val deployedApp = deploy(fullFileName, deployer)
       println("\n------- Deployed, [R] to redeploy, [X] to exit --------\n")
 
       var commandValid = false
@@ -41,9 +48,7 @@ object Boot {
     }
   }
 
-  private def start(glassFish: GlassFish) {
-    val port = 8080
-
+  private def start(port: Int, glassFish: GlassFish) {
     glassFish.start
 
     // Run commands
@@ -59,8 +64,8 @@ object Boot {
 
     // Create thread pool
     commandRunner.run("create-threadpool",
-      "--maxthreadpoolsize=200",
-      "--minthreadpoolsize=200",
+      "--minthreadpoolsize=4",
+      "--maxthreadpoolsize=1024",
       "my-thread-pool")
 
     // Associate my-thread-pool with my-http-listener
@@ -75,8 +80,8 @@ object Boot {
       "--contextroot=", "--force=true")
   }
 
-  //                    short   long
-  private def findWar: (String, String) = {
+  //                    fileName  fullFileName
+  private def findWar: (String,   String) = {
     val currentDir = System.getProperty("user.dir")
 
     // See project information in build.properties
@@ -88,8 +93,8 @@ object Boot {
     val projectName    = props.getProperty("project.name")
     val projectVersion = props.getProperty("project.version")
 
-    val short = projectName + "_" + scalaVersion + "-" + projectVersion + ".war"
-    val long  = currentDir + "/target/scala_" + scalaVersion + "/" + short
-    (short, long)
+    val fileName     = projectName + "_" + scalaVersion + "-" + projectVersion + ".war"
+    val fullFileName = currentDir + "/target/scala_" + scalaVersion + "/" + fileName
+    (fileName, fullFileName)
   }
 }
