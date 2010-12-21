@@ -1,0 +1,13 @@
+#!/bin/sh
+
+GLASBT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+# Start standalone mode if the current directory is not an SBT project
+if [ -d project ]
+then
+echo "java -Xmx512m -cp "$GLASBT_DIR/lib/*" glasbt.Sbt "$@""
+java -Xmx512m -cp "$GLASBT_DIR/lib/*" glasbt.Sbt "$@"
+else
+echo "java -Xmx512m -cp "$GLASBT_DIR/lib/*" glasbt.Standalone "$@""
+java -Xmx512m -cp "$GLASBT_DIR/lib/*" glasbt.Standalone "$@"
+fi

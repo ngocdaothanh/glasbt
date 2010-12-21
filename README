@@ -3,11 +3,27 @@ Glasbt:
   based on GlashFish 3.1, similar to maven-embedded-glassfish-plugin for Java and Maven
 * May also be used as a lightweight standalone web server
 
-== Install and use with SBT projects
+== Install
 
-Download glasbt.zip and extract to a directory and add this directory to system
-path, so that the command "glasbt" can be run easily.
+Download glasbt.zip and extract to a directory. Then add "bin/glasbt" to system
+path, so that "glasbt" command can be run from any SBT web project directory.
+
+== Use Glasbt with SBT web projects
 
 From an SBT web project directory, package and start Glasbt:
-$ sbt package         <-- create WAR file
-$ glasbt              <-- start GlashFish and deploy the WAR file
+$ sbt package   <-- create WAR file
+$ glasbt        <-- start GlashFish and deploy WAR file to a temporary directory
+
+== Run Glasbt in standalone mode
+
+Glasbt is a stripped down version of GlashFish.
+
+See Glasbt directory, your domain is domain1. You should be familar with
+GlashFish to be able to configure domain1 properly.
+
+To start, from Glasbt directory, run "glasbt". You may need to edit bin/glasbt
+to configure options to "java" command.
+
+== Reference
+
+http://embedded-glassfish.java.net/

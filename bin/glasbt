@@ -1,4 +1,0 @@
-#!/bin/sh
-
-GLASBT_DIR="$(cd "$(dirname "$0")" && pwd)"
-java -Xmx512m -cp "$GLASBT_DIR/*" glasbt.Boot "$@"

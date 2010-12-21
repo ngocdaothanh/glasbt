@@ -2,10 +2,10 @@ package glasbt
 
 import java.io.{File, FileInputStream}
 import java.util.{Properties, Scanner}
-import org.glassfish.embeddable.{CommandRunner, Deployer, GlassFish, GlassFishRuntime}
+import org.glassfish.embeddable.{BootstrapProperties, CommandRunner, Deployer, GlassFish, GlassFishProperties, GlassFishRuntime}
 
 /** http://embedded-glassfish.java.net/nonav/apidocs/org/glassfish/embeddable/GlassFish.html */
-object Boot {
+object Sbt {
   def main(args: Array[String]) {
     val argv = args.size
     if (argv > 1) {
